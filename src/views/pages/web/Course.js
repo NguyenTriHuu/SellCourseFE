@@ -71,20 +71,10 @@ export default function Course() {
                             <h1>not data</h1>
                         </>
                     )}
-                    <div>
-                        <button onClick={() => fetchNextPage()} disabled={!hasNextPage || isFetchingNextPage}>
-                            {isFetchingNextPage
-                                ? 'Loading more...'
-                                : hasNextPage
-                                ? 'Load Newer'
-                                : 'Nothing more to load'}
-                        </button>
-                    </div>
                     <div>{isFetching && !isFetchingNextPage ? 'Background Updating...' : null}</div>
                 </div>
             )}
             <hr />
-            <button onClick={(e) => dowloadImage(e, 2)}>kiểm tra cache</button>
         </div>
     );
 }
@@ -125,3 +115,13 @@ function Card({ item }) {
         </div>
     );
 }
+
+/* <div>
+                        <button onClick={() => fetchNextPage()} disabled={!hasNextPage || isFetchingNextPage}>
+                            {isFetchingNextPage
+                                ? 'Loading more...'
+                                : hasNextPage
+                                ? 'Load Newer'
+                                : 'Nothing more to load'}
+                        </button>
+                    </div> */

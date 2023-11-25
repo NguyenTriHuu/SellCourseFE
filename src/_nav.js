@@ -12,6 +12,7 @@ import {
     cilPuzzle,
     cilSpeedometer,
     cilStar,
+    cilBriefcase,
 } from '@coreui/icons';
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react';
 
@@ -40,7 +41,7 @@ const _nav = [
         component: CNavGroup,
         name: 'Buttons',
         to: '/buttons',
-        icon: <CIcon icon={cilCursor} customClassName="nav-icon" />,
+        icon: <CIcon icon={cilBriefcase} customClassName="nav-icon" />,
         items: [
             {
                 component: CNavItem,
@@ -56,6 +57,28 @@ const _nav = [
                 component: CNavItem,
                 name: 'Dropdowns',
                 to: '/buttons/dropdowns',
+            },
+        ],
+    },
+    {
+        component: CNavGroup,
+        name: 'Category Management',
+        icon: <CIcon icon={cilBriefcase} customClassName="nav-icon" />,
+        items: [
+            {
+                component: CNavItem,
+                name: 'Category',
+                to: '/admin/category',
+            },
+            {
+                component: CNavItem,
+                name: 'Program',
+                to: '/admin/program',
+            },
+            {
+                component: CNavItem,
+                name: 'Subject',
+                to: '/admin/subject',
             },
         ],
     },

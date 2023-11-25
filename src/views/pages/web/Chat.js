@@ -86,13 +86,10 @@ function Chat({ idCourse }) {
             <div style={{ height: '100vh', width: '100%' }}>
                 <MainContainer>
                     <ChatContainer>
-                        {/* Display chat messages and typing indicator */}
-
                         <MessageList
                             style={{ overflow: 'auto' }}
                             typingIndicator={isChatbotTyping ? <TypingIndicator content="ChatGPT is thinking" /> : null}
                         >
-                            {/* Map through chat messages and render each message */}
                             {messages &&
                                 messages.map((message, i) => {
                                     return (
@@ -104,8 +101,6 @@ function Chat({ idCourse }) {
                                     );
                                 })}
                         </MessageList>
-
-                        {/* Input field for the user to type messages */}
                         <MessageInput placeholder="Type Message here" onSend={handleUserMessage} attachButton={false} />
                     </ChatContainer>
                 </MainContainer>
