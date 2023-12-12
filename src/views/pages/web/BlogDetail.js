@@ -6,9 +6,10 @@ import styles from './scss/BlogDetail.module.scss';
 import classNames from 'classnames/bind';
 import './scss/BlogDetail.css';
 import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
-import ReactHtmlParser from 'react-html-parser';
 import Comment3 from 'src/views/comment/Comment3';
 import Divider from '@mui/material/Divider';
+import parse from 'html-react-parser';
+
 function BlogDetail() {
     const [data, setData] = useState({});
     const axiosPrivate = useAxiosPrivate();
@@ -136,9 +137,7 @@ function BlogDetail() {
                     </div>
 
                     {data && data.content && (
-                        <div className="mt-2 max-w-full overflow-auto">
-                            {ReactHtmlParser(JSON.parse(data?.content))}
-                        </div>
+                        <div className="mt-2 max-w-full overflow-auto">{parse(JSON.parse(data?.content))}</div>
                     )}
                     <Divider variant="middle" sx={{ borderWidth: '2px', borderColor: 'black', marginTop: '20px' }} />
                     <div className="w-full mt-5" ref={commentRef}>
