@@ -300,28 +300,6 @@ const Features = ({ lectureBase }) => {
         return new File([file], name, { type: file.type });
     };
 
-    const Content = () => {
-        const [contentTemp, setContentTemp] = useState(content);
-        const ckeditorHandle = (e, editor) => {
-            setContentTemp(editor.getData());
-        };
-        const handleBlurCk = () => {
-            setContent(contentTemp);
-        };
-        console.log(contentTemp);
-        return (
-            <CKEditor
-                editor={ClassicEditor}
-                data={contentTemp}
-                onReady={(editor) => {
-                    console.log('Editor1 is ready to use!', editor);
-                }}
-                onChange={ckeditorHandle}
-                onBlur={handleBlurCk}
-            />
-        );
-    };
-
     const RenderVideoDataBase = ({ file, idx }) => {
         const [tempFileName, setTempFileName] = useState(file?.fileName);
         const handleChangeNameVideoDataBase = (e, idx) => {
@@ -503,27 +481,21 @@ const Features = ({ lectureBase }) => {
         );
     };
 
+    const handleSetContent = (text) => {
+        setContent(text);
+    };
+
     return (
         <div className="grid">
             <div className="row">
                 <div className="col l-9 relative">
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setOpenModal(true);
-                        }}
-                    >
-                        clickme
-                    </button>
+                    {lecture && lecture?.title && (
+                        <p className="my-4 w-full text-3xl font-sans text-black">{lecture?.title}</p>
+                    )}
                     <div className="mt-2 mb-2 flex">
                         <label className={`${cx('label')} mr-2`}>
                             <input type="file" accept="video/*" required onChange={handleAddFile} />
                             <span>Add Video</span>
-                        </label>
-
-                        <label className={`${cx('label')} mr-2`}>
-                            <input type="file" accept="video/*" required onChange={handleAddExercise} />
-                            <span>Add Exercise</span>
                         </label>
                     </div>
                     {lecture && lecture?.files && Object.keys(lecture?.files).length > 0 && fileItem ? (
@@ -591,7 +563,7 @@ const Features = ({ lectureBase }) => {
                     )}
                     <div className="mt-3">
                         <p className="text-2xl font-sans tracking-wide text-black">Content</p>
-                        <Content />
+                        <Content cont={lecture?.content} onSetContent={handleSetContent} />
                     </div>
 
                     <div className="mt-5">
@@ -898,6 +870,30 @@ const ModalChoice = ({ lectureBase }) => {
                     </div>
                 ))}
         </>
+    );
+};
+
+const Content = ({ cont, onSetContent }) => {
+    const [contentTemp, setContentTemp] = useState(cont);
+    const ckeditorHandle = (e, editor) => {
+        setContentTemp(editor.getData());
+    };
+    const handleBlurCk = () => {
+        onSetContent(contentTemp);
+    };
+    console.log(contentTemp);
+    return (
+        contentTemp !== null && (
+            <CKEditor
+                editor={ClassicEditor}
+                data={contentTemp}
+                onReady={(editor) => {
+                    console.log('Editor1 is ready to use!', editor);
+                }}
+                onChange={ckeditorHandle}
+                onBlur={handleBlurCk}
+            />
+        )
     );
 };
 

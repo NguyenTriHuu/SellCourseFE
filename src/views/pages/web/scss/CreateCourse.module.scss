@@ -1,0 +1,254 @@
+.cform-item {
+    width: 300px;
+}
+
+.label-main {
+    font-family: 'Metropolis';
+    font-size: 15px;
+    margin-top: 25px;
+}
+.wraper {
+    padding: 20px;
+    width: 50em;
+}
+//
+$color_1: rgba(204, 204, 204, 0);
+$color_2: #007bff;
+$background-color_1: transparent;
+$background-color_2: #007bff;
+
+/* Input container */
+/* Input field */
+/* Input label */
+/* Input highlight */
+/* Input field:focus styles */
+.input-container {
+    position: relative;
+    margin-top: 20px;
+}
+.input-field {
+    display: block;
+    width: 300px;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    outline: none;
+    background-color: $background-color_1;
+    &:focus {
+        + {
+            .input-label {
+                top: -20px;
+                font-size: 12px;
+                color: $color_2;
+                + {
+                    .input-highlight {
+                        width: 310px;
+                    }
+                }
+            }
+        }
+    }
+}
+.input-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 16px;
+    color: $color_1;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+.input-highlight {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 0;
+    background-color: $background-color_2;
+    transition: all 0.3s ease;
+}
+
+.input-group {
+    position: relative;
+    width: 150px;
+    padding-top: 25px;
+}
+
+$color_4: #36395a;
+$font-family_1: 'Metropolis';
+$background-color_3: #ecac09;
+
+.button-name {
+    align-items: center;
+    appearance: none;
+    background-color: $background-color_3;
+    border-radius: 4px;
+    border-width: 0;
+    box-shadow: rgba(45, 35, 66, 0.2) 0 2px 4px, rgba(45, 35, 66, 0.15) 0 7px 13px -3px, #d6d6e7 0 -3px 0 inset;
+    box-sizing: border-box;
+    color: $color_4;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: $font-family_1;
+    height: 48px;
+    justify-content: center;
+    line-height: 1;
+    list-style: none;
+    overflow: hidden;
+    padding-left: 16px;
+    padding-right: 16px;
+    position: relative;
+    text-align: left;
+    text-decoration: none;
+    transition: box-shadow 0.15s, transform 0.15s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+    will-change: box-shadow, transform;
+    font-size: 18px;
+    &:focus {
+        box-shadow: #d6d6e7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px,
+            #d6d6e7 0 -3px 0 inset;
+    }
+    &:hover {
+        box-shadow: rgba(45, 35, 66, 0.3) 0 4px 8px, rgba(45, 35, 66, 0.2) 0 7px 13px -3px, #d6d6e7 0 -3px 0 inset;
+        transform: translateY(-2px);
+    }
+    &:active {
+        box-shadow: #d6d6e7 0 3px 7px inset;
+        transform: translateY(2px);
+    }
+}
+
+.sticked {
+    display: flex;
+    position: sticky;
+    bottom: 0;
+    padding-top: 10px;
+}
+
+$color_2: transparent;
+$background-color_1: #3aa856;
+$background-color_2: #34974d;
+$background-color_3: #2e8644;
+
+.button {
+    position: relative;
+    width: 150px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border: 1px solid #6a6b6a;
+    background-color: #ffffff;
+    transition: all 0.3s;
+    .button__text {
+        transform: translateX(30px);
+        color: #3a3838;
+        font-weight: 600;
+    }
+    .button__icon {
+        position: absolute;
+        transform: translateX(109px);
+        height: 100%;
+        width: 39px;
+        background-color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .svg {
+        width: 30px;
+        stroke: #fff;
+    }
+    &:hover {
+        background: #fdfdfd;
+        .button__text {
+            color: transparent;
+        }
+        .button__icon {
+            width: 148px;
+            transform: translateX(0);
+        }
+    }
+    &:active {
+        .button__icon {
+            background-color: #ffffff;
+        }
+        border: 1px solid #6a6b6a;
+    }
+}
+.button__icon {
+    transition: all 0.3s;
+}
+.button__text {
+    transition: all 0.3s;
+}
+$color_1: white;
+
+.btn {
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    font-weight: 600;
+    &:hover {
+        background: #8d8d8e;
+        border: none;
+        outline: none;
+    }
+    &:focus {
+        background: #8d8d8e;
+        border: none;
+        outline: none;
+    }
+    &:focus-visible {
+        background: #8d8d8e;
+        border: none;
+        outline: none;
+    }
+}
+
+.button_add {
+    margin-top: 15px;
+    font-family: 'Metropolis', sans-serif;
+    background-color: #f3f7fe;
+    color: #3b82f6;
+    border: none;
+    border-radius: 8px;
+    width: 20px;
+    height: 20px;
+    transition: 0.3s;
+    &:hover {
+        background-color: #3b82f6;
+        box-shadow: 0 0 0 5px #3b83f65f;
+        color: #fff;
+    }
+}
+
+.input {
+    width: 100%;
+    max-width: 400px;
+    height: 45px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1.5px solid lightgrey;
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    box-shadow: 0px 0px 20px -18px;
+    &:hover {
+        border: 2px solid lightgrey;
+        box-shadow: 0px 0px 20px -17px;
+    }
+    &:active {
+        transform: scale(0.95);
+    }
+    &:focus {
+        border: 2px solid grey;
+    }
+}

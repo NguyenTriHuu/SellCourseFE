@@ -46,7 +46,16 @@ function Introduction() {
     console.log(data);
 
     const handleBuyCourse = () => {
-        window.open(`${urlPay}`);
+        if (data?.price === 0) {
+            axiosPrivate
+                .get(`/api/course/enrolled/${location?.state?.idCourse}`)
+                .then((res) => {
+                    navigate('/course/enrolled', { state: { idCourse: location?.state?.idCourse } });
+                })
+                .catch((error) => console.log(error));
+        } else {
+            window.open(`${urlPay}`);
+        }
     };
 
     return (

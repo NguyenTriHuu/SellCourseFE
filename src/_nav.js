@@ -37,29 +37,7 @@ const _nav = [
             text: 'NEW',
         },
     },
-    {
-        component: CNavGroup,
-        name: 'Buttons',
-        to: '/buttons',
-        icon: <CIcon icon={cilBriefcase} customClassName="nav-icon" />,
-        items: [
-            {
-                component: CNavItem,
-                name: 'Buttons',
-                to: '/buttons/buttons',
-            },
-            {
-                component: CNavItem,
-                name: 'Buttons groups',
-                to: '/buttons/button-groups',
-            },
-            {
-                component: CNavItem,
-                name: 'Dropdowns',
-                to: '/buttons/dropdowns',
-            },
-        ],
-    },
+
     {
         component: CNavGroup,
         name: 'Category Management',
@@ -81,6 +59,12 @@ const _nav = [
                 to: '/admin/subject',
             },
         ],
+    },
+    {
+        component: CNavItem,
+        name: 'User Management',
+        to: '/admin/users',
+        icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
     },
 ];
 

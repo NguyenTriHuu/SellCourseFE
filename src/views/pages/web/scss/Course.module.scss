@@ -77,3 +77,102 @@ $background-color_1: #c9c9c9;
     //margin-bottom: 100px;
     min-height: 500px;
 }
+
+.cta {
+    border: none;
+    background: none;
+    span {
+        padding-bottom: 7px;
+        letter-spacing: 4px;
+        font-size: 14px;
+        padding-right: 15px;
+        text-transform: uppercase;
+    }
+    svg {
+        transform: translateX(-8px);
+        transition: all 0.3s ease;
+    }
+    &:hover {
+        svg {
+            transform: translateX(0);
+        }
+        .hover-underline-animation {
+            &:after {
+                transform: scaleX(1);
+                transform-origin: bottom left;
+            }
+        }
+    }
+    &:active {
+        svg {
+            transform: scale(0.9);
+        }
+    }
+}
+.hover-underline-animation {
+    position: relative;
+    color: black;
+    padding-bottom: 20px;
+    &:after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        transform: scaleX(0);
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: #000000;
+        transform-origin: bottom right;
+        transition: transform 0.25s ease-out;
+    }
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 20px;
+}
+.search__input {
+    font-family: inherit;
+    font-size: inherit;
+    background-color: #f4f2f2;
+    border: none;
+    color: #646464;
+    padding: 0.7rem 1rem;
+    border-radius: 30px;
+    width: 30em;
+    transition: all ease-in-out 0.5s;
+    margin-right: -2rem;
+    &:hover {
+        box-shadow: 0 0 1em #00000013;
+    }
+    &:focus {
+        box-shadow: 0 0 1em #00000013;
+        outline: none;
+        background-color: #f0eeee;
+        + {
+            .search__button {
+                background-color: #f0eeee;
+            }
+        }
+    }
+    &::-webkit-input-placeholder {
+        font-weight: 100;
+        color: #ccc;
+    }
+}
+.search__button {
+    border: none;
+    background-color: #f4f2f2;
+    margin-top: 0.1em;
+    &:hover {
+        cursor: pointer;
+    }
+}
+.search__icon {
+    height: 1.3em;
+    width: 1.3em;
+    fill: #b4b4b4;
+}

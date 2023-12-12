@@ -47,7 +47,7 @@ const StyledMenu = styled((props) => (
     },
 }));
 
-function MenuCourse({ handleDelete, data }) {
+function MenuCourse({ handleDelete, data, onlock, lock }) {
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -72,6 +72,16 @@ function MenuCourse({ handleDelete, data }) {
     };
     const handleClose = () => {
         setAnchorEl(null);
+    };
+
+    const handlelock = () => {
+        setAnchorEl(null);
+        onlock && onlock(data[0], false);
+    };
+
+    const handleUnlock = () => {
+        setAnchorEl(null);
+        onlock && onlock(data[0], true);
     };
 
     return (
@@ -112,6 +122,17 @@ function MenuCourse({ handleDelete, data }) {
                 <MenuItem disableRipple disabled={data.length > 0} onClick={handleAdd}>
                     <FileCopyIcon />
                     Add new
+                </MenuItem>
+
+                <Divider sx={{ my: 0.5 }} />
+                <MenuItem onClick={handlelock} disableRipple disabled={data.length !== 1 || !lock}>
+                    <EditIcon />
+                    Lock
+                </MenuItem>
+
+                <MenuItem onClick={handleUnlock} disableRipple disabled={data.length !== 1 || lock}>
+                    <FileCopyIcon />
+                    Unlock the lock
                 </MenuItem>
             </StyledMenu>
         </div>

@@ -5,6 +5,7 @@ const AddCourse = React.lazy(() => import('./views/pages/admin/AddCourse'));
 const Category = React.lazy(() => import('./views/pages/admin/CategoryManagement'));
 const Program = React.lazy(() => import('./views/pages/admin/ProgramManagement'));
 const Subject = React.lazy(() => import('./views/pages/admin/SubjectManagement'));
+const UserManagement = React.lazy(() => import('./views/pages/admin/UserManagement'));
 //Layouts
 const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'));
 const routesAdmin = [
@@ -16,6 +17,7 @@ const routesAdmin = [
     { path: '/admin/category', name: 'Category', element: Category, Layout: DefaultLayout },
     { path: '/admin/program', name: 'Program', element: Program, Layout: DefaultLayout },
     { path: '/admin/subject', name: 'Subject', element: Subject, Layout: DefaultLayout },
+    { path: '/admin/users', name: 'User', element: UserManagement, Layout: DefaultLayout },
 ];
 
 export default routesAdmin;

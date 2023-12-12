@@ -23,7 +23,27 @@ import IconButton from '@mui/material/IconButton';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleFilledWhite';
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import Rating from '@mui/material/Rating';
+import Button from '@mui/material/Button';
+import ErrorIcon from '@mui/icons-material/Error';
+import { v4 as uuidv4 } from 'uuid';
+import jwtDecode from 'jwt-decode';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 const cx = classNames.bind(styles);
+
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 500,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
 
 function EnRolled() {
     const axiosPrivate = useAxiosPrivate();
@@ -32,7 +52,12 @@ function EnRolled() {
     //location?.state?.idCourse
     const [data, setData] = useState();
     const [open, setOpen] = useState('instructor');
-
+    const [openModal, setOpenModal] = useState(false);
+    const [valueRating, setValueRating] = useState();
+    const accessToken = localStorage.getItem('AccessToken');
+    const [rating, setRating] = useState();
+    const [openModalMessage, setOpenModalMessage] = useState(false);
+    const [openModalSuccess, setOpenModalSuccess] = useState(false);
     useEffect(() => {
         axiosPrivate
             .get(`/api/course/enrolled/${location?.state?.idCourse}`)
@@ -40,6 +65,60 @@ function EnRolled() {
             .catch((error) => console.log(error));
     }, []);
     console.log(data);
+
+    useEffect(() => {
+        axiosPrivate
+            .get(`/api/rating/course/${location?.state?.idCourse}/get`, {
+                params: { userName: jwtDecode(accessToken)?.sub },
+            })
+            .then((res) => setRating(res?.data))
+            .catch((error) => console.log(error));
+    }, []);
+
+    useEffect(() => {
+        setValueRating(rating?.rating);
+    }, [rating]);
+
+    const handleCloseModal = (e) => {
+        e.stopPropagation();
+        setOpenModal(false);
+    };
+
+    const handleRating = (e) => {
+        e.stopPropagation();
+        let ratingRequest = {
+            userName: jwtDecode(accessToken)?.sub,
+            idCourse: location?.state?.idCourse,
+            rating: valueRating,
+            idRating: rating?.idRating,
+        };
+
+        axiosPrivate
+            .post('/api/rating/save', ratingRequest, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then((res) => {
+                setRating(res?.data);
+                setOpenModal(false);
+                setOpenModalSuccess(true);
+            })
+            .catch((error) => {
+                console.log(error);
+                setOpenModalMessage(true);
+            });
+    };
+
+    const handleCloseModalMessage = (e) => {
+        e.stopPropagation();
+        setOpenModalMessage(false);
+    };
+
+    const handleCloseModalSuccess = (e) => {
+        e.stopPropagation();
+        setOpenModalSuccess(false);
+    };
     return (
         <>
             <div className="grid">
@@ -56,7 +135,7 @@ function EnRolled() {
                             <p className="text-lg font-sans tracking-widest text-center">{data?.course?.title}</p>
                         </div>
                         <div className="my-4 ml-5">
-                            <BorderLinearProgress variant="determinate" value={50} />
+                            <BorderLinearProgress variant="determinate" value={data?.point} />
                         </div>
                         <div className="mx-auto mb-5">
                             <p className="text-xl font-sans tracking-widest text-center">{data?.point}% COMPLETE</p>
@@ -74,7 +153,7 @@ function EnRolled() {
                                         <ListItemIcon>
                                             <ListAltIcon />
                                         </ListItemIcon>
-                                        <ListItemText primary="Course Curriculum" />
+                                        <ListItemText primary="Danh sách bài học" />
                                     </ListItemButton>
                                 </ListItem>
 
@@ -88,7 +167,21 @@ function EnRolled() {
                                         <ListItemIcon>
                                             <PersonOutlineIcon />
                                         </ListItemIcon>
-                                        <ListItemText primary="Your Instructor" />
+                                        <ListItemText primary="Instructor của bạn" />
+                                    </ListItemButton>
+                                </ListItem>
+
+                                <ListItem>
+                                    <ListItemButton
+                                        onClick={(e) => {
+                                            e.stopPropagation;
+                                            setOpenModal(true);
+                                        }}
+                                    >
+                                        <ListItemIcon>
+                                            <PersonOutlineIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Đánh giá" />
                                     </ListItemButton>
                                 </ListItem>
                             </List>
@@ -102,6 +195,106 @@ function EnRolled() {
                             <Instructor idCourse={data?.course?.id} />
                         </div>
                     </div>
+                    <Modal
+                        open={openModal}
+                        onClose={handleCloseModal}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Box sx={style}>
+                            <div className=" grid justify-items-center">
+                                <p className="text-2xl font-sans tracking-widest">Đánh giá </p>
+                                <p className="text-xl font-sans tracking-widest">
+                                    Bạn nghĩ như nào về khóa học hiện tại
+                                </p>
+                                <Rating
+                                    name="size-large"
+                                    value={valueRating || 0}
+                                    size="large"
+                                    onChange={(event, newValue) => {
+                                        event.stopPropagation();
+                                        setValueRating(newValue);
+                                    }}
+                                />
+                            </div>
+                            <div className="mt-5 flex grid justify_items-end">
+                                <Button variant="contained" sx={{ marginBottom: '8px' }} onClick={handleRating}>
+                                    Đánh giá
+                                </Button>
+                                <Button
+                                    variant="outlined"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setOpenModal(false);
+                                    }}
+                                >
+                                    Hủy
+                                </Button>
+                            </div>
+                        </Box>
+                    </Modal>
+
+                    <Modal
+                        open={openModalMessage}
+                        onClose={handleCloseModalMessage}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Box sx={style}>
+                            <div className=" grid justify-items-center">
+                                <div className="flex mb-2">
+                                    <ErrorIcon sx={{ color: 'red' }} />
+                                    <p className="ml-2 text-2xl font-sans tracking-widest">Lỗi hệ thống </p>
+                                </div>
+
+                                <p className="text-base font-sans tracking-widest">
+                                    Hiện hệ thống đang gặp vấn đề hãy thử lại sau.
+                                </p>
+                            </div>
+                            <div className="mt-5 flex grid justify_items-end">
+                                <Button
+                                    variant="contained"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setOpenModalMessage(false);
+                                    }}
+                                >
+                                    OK
+                                </Button>
+                            </div>
+                        </Box>
+                    </Modal>
+
+                    <Modal
+                        open={openModalSuccess}
+                        onClose={handleCloseModalSuccess}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Box sx={style}>
+                            <div className=" grid justify-items-center">
+                                <div className="flex mb-2">
+                                    <CheckCircleIcon sx={{ color: 'green' }} />
+                                    <p className="ml-2 text-2xl font-sans tracking-widest">Đánh giá thành công </p>
+                                </div>
+
+                                <p className="text-base font-sans tracking-widest">
+                                    Bạn đã đánh giá khóa học thành công.
+                                </p>
+                            </div>
+                            <div className="mt-5 flex grid justify_items-end">
+                                <Button
+                                    variant="contained"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setOpenModalSuccess(false);
+                                    }}
+                                >
+                                    OK
+                                </Button>
+                            </div>
+                        </Box>
+                    </Modal>
                 </div>
             </div>
         </>

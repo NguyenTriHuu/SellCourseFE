@@ -273,7 +273,7 @@ const ContentLesson = ({ file, lesson }) => {
         <div className="w-full">
             <div className="flex mb-3 mt-5">
                 <OndemandVideoIcon fontSize="large" />
-                <p className="ml-5 text-2xl font-sans text-black">Name Lesson</p>
+                <p className="ml-5 text-2xl font-sans text-black">{lesson?.title}</p>
             </div>
             <div className="flex justify-center items-center h-full mb-5">
                 <ReactPlayer url={videoOfLesson} playing controls width="90%" height="auto" />
@@ -480,7 +480,7 @@ const ContentExercise = ({ lecture }) => {
                 <div className="col l-9 h-screen overflow-y-auto">
                     <div className="flex flex-row justify-between mt-5 items-center">
                         <p className="relative text-5xl  font-semibold whitespace-nowrap truncate overflow-hidden">
-                            Text in a modal
+                            Exercise
                         </p>
                         <Tooltip title="Retry">
                             <button className="mr-5" onClick={(e) => handleRetry(e)}>

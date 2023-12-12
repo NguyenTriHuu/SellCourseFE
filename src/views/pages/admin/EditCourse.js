@@ -24,6 +24,8 @@ function EditCourse() {
     const [programSelect, setProgramSelect] = useState();
     const [subjectSelect, setSubjectSelected] = useState();
     const [statusSelect, setStatusSelect] = useState('');
+    const [approvedSelect, setApprovedSelect] = useState('');
+    const [courseUpdated, setCourseUpdated] = useState({});
     function isEmpty(strIn) {
         if (strIn === undefined) {
             return true;
@@ -95,6 +97,13 @@ function EditCourse() {
         }
         if (name === 'status') {
             setStatusSelect(value);
+            setMeta((prevState) => ({
+                ...prevState,
+                [name]: value,
+            }));
+        }
+        if (name === 'approved') {
+            setApprovedSelect(value);
             setMeta((prevState) => ({
                 ...prevState,
                 [name]: value,
@@ -178,6 +187,17 @@ function EditCourse() {
         setCourseSelect(value);
     }, []);
 
+    const handleLock = (value1, value2) => {
+        axiosPrivate
+            .post(`/api/course/${value1}/lock`, value2, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then((res) => setCourseUpdated(res?.data))
+            .catch((error) => console.log(error));
+    };
+    console.log(data);
     //<FormHelperText>Required</FormHelperText>
     return (
         <>
@@ -276,6 +296,22 @@ function EditCourse() {
                             <MenuItem value={false}>Block</MenuItem>
                         </Select>
                     </FormControl>
+                    <FormControl variant="standard" required sx={{ m: 1, minWidth: 120 }}>
+                        <InputLabel id="demo-simple-select-required-label">Approved</InputLabel>
+                        <Select
+                            id="demo-simple-select-required"
+                            name="approved"
+                            value={approvedSelect}
+                            onChange={handleChange}
+                        >
+                            <MenuItem value="">
+                                <em>None</em>
+                            </MenuItem>
+                            <MenuItem value={'APPROVED'}>Approved</MenuItem>
+                            <MenuItem value={'NOTAPPROVED'}>Not approved</MenuItem>
+                            <MenuItem value={'PENDDING'}>Pendding</MenuItem>
+                        </Select>
+                    </FormControl>
                     <button
                         className="cursor-pointer transition-all bg-blue-500 text-white px-6 py-2 rounded-lg
                                   border-blue-600
@@ -283,11 +319,16 @@ function EditCourse() {
                                   active:border-b-[2px] active:brightness-90 active:translate-y-[2px] mt-6"
                         onClick={handleFilter}
                     >
-                        Button
+                        Filter
                     </button>
                 </div>
                 <div className="mt-6">
-                    <MenuCourse onDelete={handleDelete} data={courseSelect} />
+                    <MenuCourse
+                        onDelete={handleDelete}
+                        data={courseSelect}
+                        onlock={handleLock}
+                        lock={courseSelect && courseSelect.length !== 0 && data?.listCourse[courseSelect[0]]?.status}
+                    />
                 </div>
             </div>
 

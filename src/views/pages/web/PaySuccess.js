@@ -15,7 +15,8 @@ function PaySuccess() {
     };
 
     useEffect(() => {
-        axiosPrivate(`/course/enrolled/${idCourse}`)
+        axiosPrivate
+            .get(`/api/course/enrolled/${idCourse}`)
             .then((res) => {
                 console.log(res);
             })
@@ -23,7 +24,7 @@ function PaySuccess() {
     }, []);
     return (
         <>
-            <div className="grid">
+            <div className="grid " style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <div className={cx('wrapperAlert')}>
                     <div className="contentAlert">
                         <div className={cx('topHalf')}>

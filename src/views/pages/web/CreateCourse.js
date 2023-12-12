@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CForm, CFormInput, CCol, CInputGroup, CInputGroupText } from '@coreui/react';
 import Paper from '@mui/material/Paper';
-import styles from './scss/AddCourse.module.scss';
+import styles from './scss/CreateCourse.module.scss';
 import classNames from 'classnames/bind';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
@@ -34,6 +34,7 @@ import Modal from 'src/views/modal/Modal';
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from '@mui/material/Backdrop';
 import InputAdornment from '@mui/material/InputAdornment';
+import jwtDecode from 'jwt-decode';
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -46,7 +47,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-function AddCourse() {
+function CreateCourse() {
     const [dataCourse, setDataCourse] = useState({});
     const [data, setData] = useState([]);
     const [category, setCategory] = useState({});
@@ -76,6 +77,7 @@ function AddCourse() {
     const [modal, setModal] = useState({});
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const accessToken = localStorage.getItem('AccessToken');
     useEffect(() => {
         console.log('render');
         axiosPrivate
@@ -313,17 +315,53 @@ function AddCourse() {
     };
     console.log(thumbnail);
     console.log(videoIntro);
+    console.log(courseDetail);
     const handleClickCreateOrUpdateCourse = (e) => {
         const thematics = courseDetail;
         const formData = new FormData();
-        thumbnail ? formData.append('thumdnail', thumbnail) : formData.append('thumdnail', null);
-        videoIntro ? formData.append('file', videoIntro) : formData.append('file', null);
+        try {
+            if (!location?.state?.idCourse) {
+                if (
+                    !thumbnail ||
+                    !videoIntro ||
+                    !dataCourse?.title ||
+                    !dataCourse?.description ||
+                    !dataCourse?.price ||
+                    !dataCourse?.subject.code ||
+                    !dataCourse?.shortDescription ||
+                    !dataCourse.dateStart
+                ) {
+                    setModal({
+                        type: 'WARNING',
+                        onClose: handleCloseModal,
+                        message: 'Để tạo một khóa học mới vui lòng hoàn thành tất cả các trường',
+                        titleMessage: 'Notification ',
+                        nameButton: 'Ok',
+                    });
+                    setOpenModal(true);
+                    return;
+                }
+            }
+        } catch (error) {
+            setModal({
+                type: 'WARNING',
+                onClose: handleCloseModal,
+                message: 'Để tạo một khóa học mới vui lòng hoàn thành tất cả các trường',
+                titleMessage: 'Notification ',
+                nameButton: 'Ok',
+            });
+            setOpenModal(true);
+            return;
+        }
+
+        thumbnail && formData.append('thumdnail', thumbnail);
+        videoIntro && formData.append('file', videoIntro);
         formData.append('title', dataCourse?.title);
         formData.append('description', dataCourse?.description);
         formData.append('price', dataCourse?.price);
-        formData.append('teacherId', dataCourse?.teacher?.id);
         formData.append('subject', dataCourse?.subject.code);
         formData.append('shortDescription', dataCourse?.shortDescription);
+        formData.append('userName', jwtDecode(accessToken)?.sub);
         dataCourse.dateStart && formData.append('dateStart', dayjs(dataCourse.dateStart).format());
         if (!location?.state?.idCourse) {
             setLoading(true);
@@ -338,44 +376,61 @@ function AddCourse() {
                     setDataCourse(response.data);
                     console.log(courseId.current);
                     console.log(response);
-                    axiosPrivate
-                        .post(`/api/course/save/${courseId.current}/detail`, thematics, {
-                            headers: {
-                                'Content-Type': 'application/json',
+                    if (thematics && thematics.length !== 0) {
+                        axiosPrivate
+                            .post(`/api/course/save/${courseId.current}/detail`, thematics, {
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                            })
+                            .then((res) => {
+                                setLoading(false);
+                                console.log(res);
+                                setModal({
+                                    type: 'SUCCESS',
+                                    onClose: () => {
+                                        navigate(-1, { state: { courseForcus: courseId.current } });
+                                    },
+                                    action: () => {
+                                        window.location.reload();
+                                    },
+                                    message: 'Successful course addition! You can review or return to the course list ',
+                                    titleMessage: 'Notification ',
+                                    nameButton: 'Add new',
+                                });
+                                setOpenModal(true);
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                                setLoading(false);
+                                setModal({
+                                    type: 'ERROR',
+                                    onClose: handleCloseModal,
+                                    action: () => {
+                                        navigate(-1);
+                                    },
+                                    message: 'Update failure, system error',
+                                    titleMessage: 'Error Message ',
+                                    nameButton: 'Return list',
+                                });
+                                setOpenModal(true);
+                            });
+                    } else {
+                        setLoading(false);
+                        setModal({
+                            type: 'SUCCESS',
+                            onClose: () => {
+                                navigate(-1, { state: { courseForcus: courseId.current } });
                             },
-                        })
-                        .then((res) => {
-                            setLoading(false);
-                            console.log(res);
-                            setModal({
-                                type: 'SUCCESS',
-                                onClose: () => {
-                                    navigate(-1, { state: { courseForcus: courseId.current } });
-                                },
-                                action: () => {
-                                    window.location.reload();
-                                },
-                                message: 'Successful course addition! You can review or return to the course list ',
-                                titleMessage: 'Notification ',
-                                nameButton: 'Add new',
-                            });
-                            setOpenModal(true);
-                        })
-                        .catch((error) => {
-                            console.log(error);
-                            setLoading(false);
-                            setModal({
-                                type: 'ERROR',
-                                onClose: handleCloseModal,
-                                action: () => {
-                                    navigate(-1);
-                                },
-                                message: 'Update failure, system error',
-                                titleMessage: 'Error Message ',
-                                nameButton: 'Return list',
-                            });
-                            setOpenModal(true);
+                            action: () => {
+                                window.location.reload();
+                            },
+                            message: 'Successful course addition! You can review or return to the course list ',
+                            titleMessage: 'Notification ',
+                            nameButton: 'Add new',
                         });
+                        setOpenModal(true);
+                    }
                 })
                 .catch((error) => {
                     console.log(error);
@@ -514,7 +569,7 @@ function AddCourse() {
     };
 
     return (
-        <div>
+        <div className="ml-10">
             {location?.state?.idCourse ? <h1>Update Course</h1> : <h1>Add Course</h1>}
             <Paper elevation={3} className={cx('wraper')}>
                 <h1>General configuration</h1>
@@ -574,17 +629,6 @@ function AddCourse() {
                         renderInput={(params) => <TextField {...params} variant="standard" placeholder="Select" />}
                         onChange={handleChangeSubject}
                     />
-                    <p className={cx('label-main')}>Taught By</p>
-
-                    <Autocomplete
-                        value={dataCourse?.teacher?.fullname ?? null}
-                        size="small"
-                        sx={{ width: 300 }}
-                        options={teachers ? teachers.map((val) => val.fullname) : options}
-                        getOptionLabel={(option) => option}
-                        renderInput={(params) => <TextField {...params} variant="standard" placeholder="Select" />}
-                        onChange={handleChangeTaughtBy}
-                    />
                     <p className={cx('label-main')}>Price</p>
 
                     <FormControl variant="standard" sx={{ ml: 1, width: '20ch' }}>
@@ -608,28 +652,14 @@ function AddCourse() {
                             onChange={(newValue) => setDataCourse((prv) => ({ ...prv, dateStart: newValue }))}
                         />
                     </CCol>
-                    <CCol xs="auto">
-                        <CInputGroup className={cx('input-group')}>
-                            <CFormInput
-                                placeholder="Expires"
-                                value={dataCourse?.duration ?? ''}
-                                onChange={(e) => {
-                                    setDataCourse((prv) => ({
-                                        ...prv,
-                                        duration: e.target.value,
-                                    }));
-                                }}
-                            />
-                            <CInputGroupText id="basic-addon2">day</CInputGroupText>
-                        </CInputGroup>
-                    </CCol>
+
                     <p className={cx('label-main')}>Image</p>
 
-                    <DropZone setFile={setThumbnail} />
+                    <DropZone setFile={setThumbnail} type={'IMG'} />
 
                     <p className={cx('label-main')}>Video Introduce</p>
 
-                    <DropZone setFile={setVideoIntro} />
+                    <DropZone setFile={setVideoIntro} type={'VIDEO'} />
 
                     <p className={cx('label-main')}>Short Description</p>
 
@@ -734,9 +764,7 @@ function AddCourse() {
                                                                     id={`lecture-${idx}-${indexLec}`}
                                                                 >
                                                                     <Accordion>
-                                                                        <AccordionSummary
-                                                                            expandIcon={<ExpandMoreIcon />}
-                                                                        >
+                                                                        <AccordionSummary>
                                                                             <div>
                                                                                 <InputBase
                                                                                     placeholder="Name Lecture"
@@ -772,86 +800,6 @@ function AddCourse() {
                                                                                 />
                                                                             </div>
                                                                         </AccordionSummary>
-                                                                        <AccordionDetails>
-                                                                            {lecture.files &&
-                                                                                lecture.files.map((value) => (
-                                                                                    <div
-                                                                                        style={{ marginLeft: 40 }}
-                                                                                        key={value}
-                                                                                    >
-                                                                                        <input
-                                                                                            disabled={
-                                                                                                disableInput !==
-                                                                                                `lecture-file-${value}`
-                                                                                            }
-                                                                                            placeholder="Name file"
-                                                                                            type="text"
-                                                                                            className={cx('input')}
-                                                                                            value={`file ${value}`}
-                                                                                        />
-                                                                                        <IconButton
-                                                                                            onClick={handleClickBuild(
-                                                                                                `lecture-file-${value}`,
-                                                                                            )}
-                                                                                        >
-                                                                                            <BuildIcon />
-                                                                                        </IconButton>
-                                                                                        <IconButton>
-                                                                                            <CloudUploadIcon />
-                                                                                        </IconButton>
-                                                                                        <IconButton>
-                                                                                            <DeleteIcon />
-                                                                                        </IconButton>
-                                                                                    </div>
-                                                                                ))}
-
-                                                                            <div style={{ marginLeft: 40 }}>
-                                                                                <input
-                                                                                    placeholder="Name file"
-                                                                                    type="text"
-                                                                                    className={cx('input')}
-                                                                                />
-                                                                                <IconButton>
-                                                                                    <MouseIcon />
-                                                                                </IconButton>
-                                                                                <IconButton>
-                                                                                    <CloudUploadIcon />
-                                                                                </IconButton>
-                                                                                <IconButton>
-                                                                                    <DeleteIcon />
-                                                                                </IconButton>
-                                                                            </div>
-
-                                                                            <Paper
-                                                                                elevation={3}
-                                                                                style={{ marginTop: 20 }}
-                                                                            >
-                                                                                <div>
-                                                                                    <FormControl
-                                                                                        sx={{ m: 1, width: 3 / 4 }}
-                                                                                        variant="standard"
-                                                                                    >
-                                                                                        <InputLabel
-                                                                                            htmlFor={`standard-adornment-amount${idx}${indexLec}`}
-                                                                                        ></InputLabel>
-                                                                                        <Input
-                                                                                            id={`standard-adornment-amount${idx}${indexLec}`}
-                                                                                        />
-                                                                                    </FormControl>
-                                                                                    <button
-                                                                                        className={cx('btn')}
-                                                                                        onClick={handleClickDelete}
-                                                                                        style={{
-                                                                                            position: 'absolute',
-                                                                                            right: 20,
-                                                                                            marginTop: 10,
-                                                                                        }}
-                                                                                    >
-                                                                                        <VerticalAlignTopRoundedIcon />
-                                                                                    </button>
-                                                                                </div>
-                                                                            </Paper>
-                                                                        </AccordionDetails>
                                                                     </Accordion>
                                                                 </div>
                                                             </li>
@@ -913,9 +861,8 @@ function AddCourse() {
                 </Backdrop>
             </div>
             <Modal {...modal} openModal={openModal} setOpenModal={setOpenModal} />
-            <button onClick={handleClickOpenModal}>click me</button>
         </div>
     );
 }
 
-export default AddCourse;
+export default CreateCourse;

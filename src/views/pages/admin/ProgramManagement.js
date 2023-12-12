@@ -22,6 +22,11 @@ import { v4 as uuidv4 } from 'uuid';
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
+const columns = [
+    { field: 'id', headerName: 'ID', width: 70 },
+    { field: 'name', headerName: 'Name Program', width: 300 },
+    { field: 'code', headerName: 'Code', width: 130 },
+];
 function ProgramManagement() {
     const cx = classNames.bind(styles);
     const [programs, setProgram] = useState([]);
@@ -34,11 +39,6 @@ function ProgramManagement() {
     const [message, setMessage] = useState('');
     const [categories, setCategory] = useState([]);
     const [categogySelect, setCategorySelect] = useState();
-    const columns = [
-        { field: 'id', headerName: 'ID', width: 70 },
-        { field: 'name', headerName: 'Name Program', width: 300 },
-        { field: 'code', headerName: 'Code', width: 130 },
-    ];
 
     useEffect(() => {
         axiosPrivate
@@ -125,6 +125,7 @@ function ProgramManagement() {
         let program = programs.find((item) => item?.id === select[0]);
         setName(program?.name);
         setCode(program?.code);
+        setCategorySelect(program?.idCategory);
     };
 
     const handleAdd = () => {
@@ -146,6 +147,16 @@ function ProgramManagement() {
     const handleChange = (event) => {
         const { value } = event.target;
         setCategorySelect(value);
+        let url = '';
+        value === '' ? (url = '/api/program/all') : (url = `/api/program/${value}`);
+        axiosPrivate
+            .get(url)
+            .then((res) => setProgram(res?.data))
+            .catch((error) => console.log(error));
+    };
+
+    const handleSelect = (newValue) => {
+        setSelect([...newValue]);
     };
 
     return (
@@ -154,12 +165,11 @@ function ProgramManagement() {
                 <div className="col l-5">
                     <h1 className="ml-3 font-sans tracking-wide">Program Management</h1>
                     <div className="p-5">
-                        <p className="text-xl font-sans tracking-wide text-black">Name Program:</p>
                         <FormControl variant="standard" sx={{ m: 1, minWidth: 200 }}>
-                            <InputLabel id="demo-simple-select-error-label">Program</InputLabel>
+                            <InputLabel id="demo-simple-select-error-label">Category</InputLabel>
                             <Select
                                 id="demo-simple-select-error"
-                                name="program"
+                                name="Category"
                                 value={categogySelect ? categogySelect : ''}
                                 onChange={handleChange}
                             >
@@ -174,9 +184,9 @@ function ProgramManagement() {
                                     ))}
                             </Select>
                         </FormControl>
-                        <p>Message</p>
+                        <p className="mt-5 text-xl font-sans tracking-wide text-black">Name Program:</p>
                         <input
-                            style={{ marginTop: '20px' }}
+                            style={{ marginTop: '10px' }}
                             placeholder="Searth the internet..."
                             type="text"
                             id="programName"
@@ -239,22 +249,7 @@ function ProgramManagement() {
                         </Menu>
                     </div>
                     <div style={{ height: 400, width: '100%' }}>
-                        <DataGrid
-                            rows={programs}
-                            columns={columns}
-                            initialState={{
-                                pagination: {
-                                    paginationModel: { page: 0, pageSize: 5 },
-                                },
-                            }}
-                            pageSizeOptions={[5, 10]}
-                            checkboxSelection
-                            onRowSelectionModelChange={(newRowSelectionModel) => {
-                                setSelect(newRowSelectionModel);
-                            }}
-                            rowSelectionModel={select}
-                            disableRowSelectionOnClick
-                        />
+                        <Table data={programs} onSelect={handleSelect} select={select} />
                     </div>
                     <Backdrop
                         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -288,5 +283,26 @@ function ProgramManagement() {
         </div>
     );
 }
+
+const Table = ({ data, onSelect, select }) => {
+    return (
+        <DataGrid
+            rows={data}
+            columns={columns}
+            initialState={{
+                pagination: {
+                    paginationModel: { page: 0, pageSize: 5 },
+                },
+            }}
+            pageSizeOptions={[5, 10]}
+            checkboxSelection
+            onRowSelectionModelChange={(newRowSelectionModel) => {
+                onSelect(newRowSelectionModel);
+            }}
+            rowSelectionModel={select}
+            disableRowSelectionOnClick
+        />
+    );
+};
 
 export default ProgramManagement;

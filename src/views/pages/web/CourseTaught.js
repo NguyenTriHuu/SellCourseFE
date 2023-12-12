@@ -16,6 +16,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import useAxiosPrivate from 'src/hooks/useAxiosPrivate';
 import qs from 'qs';
 import MenuItem from '@mui/material/MenuItem';
+import { styled, alpha } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import EditIcon from '@mui/icons-material/Edit';
+import Divider from '@mui/material/Divider';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 function CourseTaught() {
     const [open, setOpen] = useState('allcourse');
     const handleSetOpen = (e, value) => {
@@ -36,7 +43,7 @@ function CourseTaught() {
                                 <ListItemIcon>
                                     <ListAltIcon />
                                 </ListItemIcon>
-                                <ListItemText primary="All Course" />
+                                <ListItemText primary="Tất cả khóa học" />
                             </ListItemButton>
                         </ListItem>
 
@@ -49,19 +56,7 @@ function CourseTaught() {
                                 <ListItemIcon>
                                     <PersonOutlineIcon />
                                 </ListItemIcon>
-                                <ListItemText primary="Comment Management" />
-                            </ListItemButton>
-                        </ListItem>
-                        <ListItem>
-                            <ListItemButton
-                                onClick={(e) => {
-                                    handleSetOpen(e, 'blog');
-                                }}
-                            >
-                                <ListItemIcon>
-                                    <PersonOutlineIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Blog Management" />
+                                <ListItemText primary="Quản lí bình luận" />
                             </ListItemButton>
                         </ListItem>
                     </List>
@@ -264,6 +259,16 @@ const AllCourse = () => {
         console.log('dsdsdsds');
         navigate('/course/update', { state: { idCourse: rowSelectionModel[0] } });
     };
+
+    const handleCreate = () => {
+        navigate('/course/create');
+    };
+
+    const handleUpdateCourse = () => {
+        navigate('/course/create', { state: { idCourse: rowSelectionModel[0] } });
+    };
+
+    const handleDeleteCourse = () => {};
     return (
         <>
             <div className="grid">
@@ -287,7 +292,7 @@ const AllCourse = () => {
                             />
                         </div>
                     </div>
-                    <div className="col l-9">
+                    <div className=" col l-9">
                         <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
                             <InputLabel id="demo-simple-select-disabled-label">Category</InputLabel>
                             <Select
@@ -361,7 +366,7 @@ const AllCourse = () => {
                             </Select>
                         </FormControl>
                         <button
-                            className="cursor-pointer transition-all bg-blue-500 text-white px-6 py-2 rounded-lg
+                            className="mr-3 cursor-pointer transition-all bg-blue-500 text-white px-6 py-2 rounded-lg
                                   border-blue-600
                                   border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px]
                                   active:border-b-[2px] active:brightness-90 active:translate-y-[2px] mt-6"
@@ -369,6 +374,7 @@ const AllCourse = () => {
                         >
                             Filter
                         </button>
+                        <MenuCourse data={rowSelectionModel} handleDelete={handleDeleteCourse} />
                     </div>
                 </div>
                 <div style={{ height: 400, width: '100%' }}>
@@ -388,26 +394,6 @@ const AllCourse = () => {
                         rowSelectionModel={rowSelectionModel}
                         disableRowSelectionOnClick
                     />
-                </div>
-                <div className="relative mt-3">
-                    <div className="absolute right-5">
-                        <button
-                            disabled={rowSelectionModel.length === 0}
-                            className={`${cx('button')}`}
-                            onClick={(e) => {
-                                console.log('delete');
-                            }}
-                        >
-                            Delete
-                        </button>
-                        <button
-                            disabled={rowSelectionModel.length !== 1}
-                            className={`${cx('button')} ml-4`}
-                            onClick={handleUpdate}
-                        >
-                            Update
-                        </button>
-                    </div>
                 </div>
             </div>
         </>
@@ -429,5 +415,125 @@ const BlogManagement = () => {
         </>
     );
 };
+
+const StyledMenu = styled((props) => (
+    <Menu
+        elevation={0}
+        anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+        }}
+        transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+        }}
+        {...props}
+    />
+))(({ theme }) => ({
+    '& .MuiPaper-root': {
+        borderRadius: 6,
+        marginTop: theme.spacing(1),
+        minWidth: 180,
+        color: theme.palette.mode === 'light' ? 'rgb(55, 65, 81)' : theme.palette.grey[300],
+        boxShadow:
+            'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+        '& .MuiMenu-list': {
+            padding: '4px 0',
+        },
+        '& .MuiMenuItem-root': {
+            '& .MuiSvgIcon-root': {
+                fontSize: 18,
+                color: theme.palette.text.secondary,
+                marginRight: theme.spacing(1.5),
+            },
+            '&:active': {
+                backgroundColor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity),
+            },
+        },
+    },
+}));
+
+function MenuCourse({ handleDelete, data }) {
+    const navigate = useNavigate();
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+    const location = useLocation();
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+        console.log(event.currentTarget);
+    };
+
+    const handleUpdate = () => {
+        setAnchorEl(null);
+        console.log('dsdsdsds');
+        navigate('/course/update', { state: { idCourse: data[0] } });
+    };
+
+    const handleCreate = () => {
+        setAnchorEl(null);
+        navigate('/course/create');
+    };
+
+    const handleUpdateCourse = () => {
+        setAnchorEl(null);
+        navigate('/course/create', { state: { idCourse: data[0] } });
+    };
+
+    const handleDeleteCourse = () => {
+        setAnchorEl(null);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    return (
+        <>
+            <Button
+                id="demo-customized-button"
+                aria-controls={open ? 'demo-customized-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+                variant="contained"
+                disableElevation
+                onClick={handleClick}
+                endIcon={<KeyboardArrowDownIcon />}
+            >
+                Options
+            </Button>
+            <StyledMenu
+                id="demo-customized-menu"
+                MenuListProps={{
+                    'aria-labelledby': 'demo-customized-button',
+                }}
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+            >
+                <MenuItem onClick={handleUpdateCourse} disableRipple disabled={data.length !== 1}>
+                    <EditIcon />
+                    Edit
+                </MenuItem>
+
+                <MenuItem onClick={handleUpdate} disableRipple disabled={data.length !== 1}>
+                    <EditIcon />
+                    Update Content
+                </MenuItem>
+
+                <MenuItem onClick={handleDelete} disableRipple disabled={data.length === 0}>
+                    <FileCopyIcon />
+                    Delete
+                </MenuItem>
+
+                <Divider sx={{ my: 0.5 }} />
+
+                <MenuItem disableRipple disabled={data.length > 0} onClick={handleCreate}>
+                    <FileCopyIcon />
+                    Add new
+                </MenuItem>
+            </StyledMenu>
+        </>
+    );
+}
 
 export default CourseTaught;

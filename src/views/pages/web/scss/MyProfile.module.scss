@@ -1,0 +1,32 @@
+$color_1: #000000;
+$color_2: #ffffff;
+
+.label {
+    input[type='file'] {
+        position: absolute;
+        top: -1000px;
+    }
+    button {
+        position: absolute;
+        top: -1000px;
+    }
+    cursor: pointer;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    padding: 5px 15px;
+    margin: 5px;
+    background: #dddddd;
+    display: inline-block;
+    &:hover {
+        background: #5cbd95;
+    }
+    &:active {
+        background: #9fa1a0;
+    }
+    &:invalid + span {
+        color: $color_1;
+    }
+    &:valid + span {
+        color: $color_2;
+    }
+}

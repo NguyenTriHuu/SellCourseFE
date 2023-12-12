@@ -56,8 +56,14 @@ const Login = () => {
                 localStorage.setItem('AccessToken', 'Bearer ' + accessToken);
                 localStorage.setItem('RefreshToken', refreshToken);
                 const token = jwtDecode(accessToken);
+                console.log(token?.roles.includes('ADMIN'));
+                if (token?.roles.includes('ADMIN')) {
+                    navigate('/admin', { replace: true });
+                } else {
+                    navigate(from, { replace: true });
+                }
                 console.log(token);
-                navigate(from, { replace: true });
+                //navigate(from, { replace: true });
                 setUser('');
                 setPwd('');
                 setSuccess(true);

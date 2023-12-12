@@ -1,0 +1,135 @@
+.group {
+    position: relative;
+}
+.input {
+    font-size: 16px;
+    padding: 10px 10px 10px 5px;
+    display: block;
+    width: 50%;
+    border: none;
+    border-bottom: 1px solid #515151;
+    background: transparent;
+    &:focus {
+        outline: none;
+        ~ {
+            label {
+                top: -20px;
+                font-size: 14px;
+                color: #5264ae;
+            }
+            .bar {
+                &:before {
+                    width: 50%;
+                }
+                &:after {
+                    width: 50%;
+                }
+            }
+            .highlight {
+                animation: inputHighlighter 0.3s ease;
+            }
+        }
+    }
+    &:valid {
+        ~ {
+            label {
+                top: -20px;
+                font-size: 14px;
+                color: #5264ae;
+            }
+        }
+    }
+}
+label {
+    color: #999;
+    font-size: 18px;
+    font-weight: normal;
+    position: absolute;
+    pointer-events: none;
+    left: 5px;
+    top: 10px;
+    transition: 0.2s ease all;
+    -moz-transition: 0.2s ease all;
+    -webkit-transition: 0.2s ease all;
+}
+.bar {
+    position: relative;
+    display: block;
+    width: 50%;
+    &:before {
+        content: '';
+        height: 2px;
+        width: 0;
+        bottom: 1px;
+        position: absolute;
+        background: #5264ae;
+        transition: 0.2s ease all;
+        -moz-transition: 0.2s ease all;
+        -webkit-transition: 0.2s ease all;
+        left: 50%;
+    }
+    &:after {
+        content: '';
+        height: 2px;
+        width: 0;
+        bottom: 1px;
+        position: absolute;
+        background: #5264ae;
+        transition: 0.2s ease all;
+        -moz-transition: 0.2s ease all;
+        -webkit-transition: 0.2s ease all;
+        right: 50%;
+    }
+}
+.highlight {
+    position: absolute;
+    height: 60%;
+    width: 100px;
+    top: 25%;
+    left: 0;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+@keyframes inputHighlighter {
+    from {
+        background: #5264ae;
+    }
+    to {
+        width: 0;
+        background: transparent;
+    }
+}
+
+$color_1: var(--text-color);
+
+.button {
+    --bg: #e74c3c;
+    --text-color: #fff;
+    position: relative;
+    width: 100px;
+    border: none;
+    background: var(--bg);
+    color: $color_1;
+    padding: 1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: 0.2s;
+    border-radius: 5px;
+    opacity: 0.8;
+    letter-spacing: 1px;
+    box-shadow: #c0392b 0px 7px 2px, #000 0px 8px 5px;
+    &:hover {
+        opacity: 1;
+    }
+    &:active {
+        top: 4px;
+        box-shadow: #c0392b 0px 3px 2px, #000 0px 3px 5px;
+    }
+    .button:disabled {
+        background: #515151;
+        opacity: 1;
+        pointer-events: none;
+        box-shadow: none;
+    }
+}
